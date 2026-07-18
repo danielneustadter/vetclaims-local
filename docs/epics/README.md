@@ -2,16 +2,23 @@
 
 Status legend: ⬜ todo · 🟨 in progress · ✅ done
 
-## Epic 1 — Foundation & walking skeleton
+## Epic 1 — Foundation & walking skeleton ✅
 - ✅ S1.1 Repo scaffold, BMAD docs, GitHub publish
-- ⬜ S1.2 Backend skeleton: FastAPI app, SQLite models, job queue, health endpoint
-- ⬜ S1.3 Case + document upload API; native PDF text extraction (PyMuPDF)
-- ⬜ S1.4 Ollama client with schema-constrained JSON + repair retry
-- ⬜ S1.5 Claimant profile: API + LLM pre-fill from uploaded docs
-- ⬜ S1.6 VA form templates: download 21-526EZ / 21-4138 / 21-0966, build field maps
-- ⬜ S1.7 Form fill service + download endpoints
-- ⬜ S1.8 Frontend shell: dashboard, documents, profile, conditions, packet pages
-- ⬜ S1.9 End-to-end walkthrough in browser, screenshots, push
+- ✅ S1.2 Backend skeleton: FastAPI app, SQLite models, job queue, health endpoint
+- ✅ S1.3 Case + document upload API; native PDF text extraction (PyMuPDF)
+- ✅ S1.4 Ollama client with schema-constrained JSON + repair retry
+- ✅ S1.5 Claimant profile: API + LLM pre-fill from uploaded docs (two-pass:
+  identity+service, then conditions; completeness-scored period merge)
+- ✅ S1.6 VA form templates: download 21-526EZ / 21-4138 / 21-0966, build field maps
+- ✅ S1.7 Form fill service + download endpoints (pypdf AcroForm, XFA dropped,
+  pdfium render verification)
+- ✅ S1.8 Frontend shell: dashboard, documents, profile, conditions, forms pages
+- ✅ S1.9 End-to-end walkthrough in browser, screenshots, push
+
+Known follow-ups from verification: unlabeled radio groups (branch of service,
+ITF benefit type, homeless Y/N) left unfilled pending the S5.4 visual
+field-verification pass; 526EZ conditions cap at 15 rows (addendum sheet in
+Epic 5).
 
 ## Epic 2 — Ingestion & case database
 - ⬜ S2.1 OCR pipeline (image-page detection + OCR engine)

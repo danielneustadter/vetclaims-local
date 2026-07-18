@@ -24,12 +24,29 @@ runtime.
 
 ## Status
 
-🚧 Under active development. See [docs/prd.md](docs/prd.md) and
-[docs/architecture.md](docs/architecture.md).
+🚧 Under active development — the **walking skeleton is working end-to-end**:
+upload records → local LLM pre-fills your profile and suggests conditions with
+evidence notes → you review/edit everything → download the filled 21-526EZ,
+21-4138, and 21-0966. See [docs/prd.md](docs/prd.md),
+[docs/architecture.md](docs/architecture.md), and the
+[epic board](docs/epics/README.md).
 
 ## Screenshots
 
-*(added as features land — see `docs/screenshots/`)*
+*All shown data is a fictional test fixture ("Alexandra Testcase"), never a
+real person.*
+
+| | |
+|---|---|
+| ![Conditions review](docs/screenshots/conditions.png) | ![Profile](docs/screenshots/profile.png) |
+| AI-suggested conditions with evidence notes from your own records | Profile pre-filled by the local LLM, human-editable |
+
+**The output — real VA forms, filled:**
+
+| | |
+|---|---|
+| ![Filled 526EZ Section V](docs/screenshots/filled-526ez-section-v.png) | ![Filled 21-4138](docs/screenshots/filled-4138.png) |
+| 21-526EZ Section V built from your selected conditions | 21-4138 statement with identity block |
 
 ## Requirements
 
