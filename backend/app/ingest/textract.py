@@ -47,11 +47,46 @@ def extract_text(job: models.Job) -> dict:
                 native_pages += source == "native"
                 db.add(models.Page(document_id=doc_id, page_no=i,
                                    text=text, text_source=source))
-            document.status = "ready"
             db.commit()
-            return {"pages": pdf.page_count, "native_pages": native_pages}
         finally:
             pdf.close()
+
+        # OCR the pages that had no usable text layer
+        from sqlalchemy import select
+        from . import ocr
+        ocr_pages = db.scalars(
+            select(models.Page).where(models.Page.document_id == doc_id,
+                                      models.Page.text_source == "none")).all()
+        ocred = 0
+        for n, p in enumerate(ocr_pages, start=1):
+            set_progress(job.id, f"OCR page {p.page_no} ({n}/{len(ocr_pages)})")
+            text = ocr.ocr_pdf_page(document.stored_path, p.page_no)
+            if len(text.strip()) >= MIN_CHARS_FOR_NATIVE:
+                p.text, p.text_source = text, "ocr"
+                ocred += 1
+        db.commit()
+
+        # classify + embed
+        from . import classify as _classify, embed as _embed
+        set_progress(job.id, "classifying document")
+        first_pages = db.scalars(
+            select(models.Page).where(models.Page.document_id == doc_id)
+            .order_by(models.Page.page_no).limit(2)).all()
+        try:
+            document.doc_type = _classify.classify(
+                "\n\n".join(p.text for p in first_pages))
+        except Exception:
+            document.doc_type = "unknown"
+        set_progress(job.id, "embedding text")
+        try:
+            n_chunks = _embed.embed_document(db, document)
+        except Exception:
+            n_chunks = -1  # embedding is best-effort; search degrades gracefully
+        document.status = "ready"
+        db.commit()
+        return {"pages": document.page_count, "native_pages": native_pages,
+                "ocr_pages": ocred, "doc_type": document.doc_type,
+                "chunks": n_chunks}
     except Exception:
         db.rollback()
         doc = db.get(models.Document, doc_id)

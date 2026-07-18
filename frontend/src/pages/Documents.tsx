@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { del, get, pollJob } from '../api'
+import { del, get, pollJob, post } from '../api'
 
 export default function DocumentsPage({ caseId }: { caseId: number }) {
   const [docs, setDocs] = useState<any[]>([])
@@ -65,8 +65,18 @@ export default function DocumentsPage({ caseId }: { caseId: number }) {
                   <td>{d.doc_type}</td>
                   <td>{d.page_count || '—'}</td>
                   <td><span className={`pill ${d.status}`}>{d.status}</span></td>
-                  <td><button className="btn danger" style={{ padding: '4px 10px' }}
-                    onClick={() => del(`/api/documents/${d.id}`).then(refresh)}>remove</button></td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    <button className="btn ghost" style={{ padding: '4px 10px', marginRight: 6 }}
+                      onClick={async () => {
+                        const { job_id } = await post(`/api/documents/${d.id}/reprocess`)
+                        await refresh()
+                        setBusy(`Reprocessing ${d.filename}…`)
+                        await pollJob(job_id, (p) => setBusy(`Reprocessing ${d.filename}: ${p}`))
+                        setBusy(''); refresh()
+                      }}>reprocess</button>
+                    <button className="btn danger" style={{ padding: '4px 10px' }}
+                      onClick={() => del(`/api/documents/${d.id}`).then(refresh)}>remove</button>
+                  </td>
                 </tr>
               ))}
             </tbody>

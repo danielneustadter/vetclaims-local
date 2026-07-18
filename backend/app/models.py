@@ -78,6 +78,47 @@ class Condition(Base):
     case: Mapped[Case] = relationship(back_populates="conditions")
 
 
+class MedicalEvent(Base):
+    """One extracted clinical fact with page-level provenance — the atom of
+    the case database. Everything downstream (suggestions, drafts, grounding)
+    cites these rows."""
+
+    __tablename__ = "medical_event"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    case_id: Mapped[int] = mapped_column(ForeignKey("case.id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("document.id"))
+    page_no: Mapped[int] = mapped_column(Integer)
+    date: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    kind: Mapped[str] = mapped_column(String(20))  # diagnosis|complaint|injury|treatment|exposure|referral
+    condition: Mapped[str] = mapped_column(String(300))  # normalized condition/topic name
+    detail: Mapped[str] = mapped_column(Text, default="")
+    provider: Mapped[str] = mapped_column(String(200), default="")
+
+
+class ExistingRating(Base):
+    __tablename__ = "existing_rating"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    case_id: Mapped[int] = mapped_column(ForeignKey("case.id"))
+    document_id: Mapped[int | None] = mapped_column(ForeignKey("document.id"), nullable=True)
+    condition: Mapped[str] = mapped_column(String(300))
+    percent: Mapped[int] = mapped_column(Integer)
+    diagnostic_code: Mapped[str] = mapped_column(String(10), default="")
+    effective_date: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+
+class Chunk(Base):
+    """Embedded text chunk; vectors live in the vec_chunk sqlite-vec table
+    keyed by this row's id."""
+
+    __tablename__ = "chunk"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    case_id: Mapped[int] = mapped_column(ForeignKey("case.id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("document.id"))
+    page_start: Mapped[int] = mapped_column(Integer)
+    page_end: Mapped[int] = mapped_column(Integer)
+    text: Mapped[str] = mapped_column(Text)
+
+
 class Job(Base):
     __tablename__ = "job"
     id: Mapped[int] = mapped_column(primary_key=True)

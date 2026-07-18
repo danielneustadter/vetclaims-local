@@ -20,13 +20,14 @@ ITF benefit type, homeless Y/N) left unfilled pending the S5.4 visual
 field-verification pass; 526EZ conditions cap at 15 rows (addendum sheet in
 Epic 5).
 
-## Epic 2 — Ingestion & case database
-- ⬜ S2.1 OCR pipeline (image-page detection + OCR engine)
-- ⬜ S2.2 Doc-type classifier (fast model)
-- ⬜ S2.3 Chunk + embed into sqlite-vec with page provenance
-- ⬜ S2.4 Structured extraction jobs → medical_event/service_period/existing_rating
-- ⬜ S2.5 Merge pass → condition timeline UI
-- ⬜ S2.6 Synthetic fixture cases + extraction-recall tests
+## Epic 2 — Ingestion & case database ✅
+- ✅ S2.1 OCR pipeline — RapidOCR (pure-pip ONNX, offline) on pages without a text layer
+- ✅ S2.2 Doc-type classifier (fast model, falls back to primary)
+- ✅ S2.3 Chunk + embed into sqlite-vec with page-span provenance + search endpoint/UI
+- ✅ S2.4 Structured extraction job → medical_event + existing_rating with page citations
+- ✅ S2.5 LLM merge pass (18→10 condition groups on fixture case) + Case File timeline UI
+- ✅ S2.6 Fixture case incl. scanned page + rating decision; extraction-recall test
+  (gated by VETCLAIMS_LLM_TESTS=1; 8/8 passing incl. live-LLM recall)
 
 ## Epic 3 — Analysis
 - ⬜ S3.1 Refdata: eCFR 38 CFR Part 4 → rating_schedule.json

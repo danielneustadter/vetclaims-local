@@ -14,6 +14,7 @@ const base = 'http://localhost:5173'
 const shots = [
   ['dashboard', 'dashboard.png'],
   ['documents', 'documents.png'],
+  ['casefile', 'casefile.png'],
   ['profile', 'profile.png'],
   ['conditions', 'conditions.png'],
   ['forms', 'forms.png'],

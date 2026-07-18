@@ -52,6 +52,27 @@ def document_pages(doc_id: int, db: Session = Depends(get_db)):
                        "preview": p.text[:400]} for p in pages]}
 
 
+@router.post("/documents/{doc_id}/reprocess")
+def reprocess_document(doc_id: int, db: Session = Depends(get_db)):
+    doc = db.get(models.Document, doc_id)
+    if not doc:
+        raise HTTPException(404)
+    # clear derived data; extract_text rebuilds pages, type, and chunks
+    for page in db.scalars(select(models.Page).where(models.Page.document_id == doc_id)):
+        db.delete(page)
+    chunk_ids = [c.id for c in db.scalars(
+        select(models.Chunk).where(models.Chunk.document_id == doc_id))]
+    if chunk_ids:
+        conn = db.connection().connection
+        conn.executemany("DELETE FROM vec_chunk WHERE chunk_id = ?",
+                         [(i,) for i in chunk_ids])
+        for c in db.scalars(select(models.Chunk).where(models.Chunk.document_id == doc_id)):
+            db.delete(c)
+    doc.status = "uploaded"
+    db.commit()
+    return {"job_id": enqueue("extract_text", {"document_id": doc_id})}
+
+
 @router.delete("/documents/{doc_id}")
 def delete_document(doc_id: int, db: Session = Depends(get_db)):
     doc = db.get(models.Document, doc_id)

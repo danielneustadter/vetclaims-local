@@ -96,9 +96,73 @@ def make_dd214(path: Path):
     c.save()
 
 
+RATING_LINES = [
+    "DEPARTMENT OF VETERANS AFFAIRS — RATING DECISION (FICTIONAL)",
+    "",
+    "Veteran: TESTCASE, ALEXANDRA J    File: C00000000",
+    "",
+    "DECISION",
+    "1. Service connection for tinnitus is granted with an evaluation of",
+    "   10 percent effective 2015-01-01. (Diagnostic Code 6260)",
+    "2. Service connection for right knee strain is granted with an",
+    "   evaluation of 10 percent effective 2015-01-01. (Diagnostic Code 5257)",
+    "",
+    "COMBINED EVALUATION FOR COMPENSATION: 20% from 2015-01-01",
+]
+
+
+def make_rating_decision(path: Path):
+    c = canvas.Canvas(str(path), pagesize=letter)
+    _page_header(c, "VA RATING DECISION (FICTIONAL TEST FIXTURE)")
+    c.setFont("Courier", 10)
+    y = H - 110
+    for ln in RATING_LINES:
+        c.drawString(54, y, ln)
+        y -= 16
+    c.showPage()
+    c.save()
+
+
+def make_scanned_str(path: Path):
+    """A page with NO text layer (rendered to an image) to exercise OCR."""
+    import io
+
+    from PIL import Image, ImageDraw
+
+    img = Image.new("L", (1700, 2200), 255)
+    d = ImageDraw.Draw(img)
+    lines = [
+        "FICTIONAL RECORD - SOFTWARE TEST FIXTURE - NOT A REAL PERSON",
+        "",
+        "CHRONOLOGICAL RECORD OF MEDICAL CARE  2013-09-02  FORT LIBERTY NC",
+        "TESTCASE, ALEXANDRA J   SSN 000-12-3456",
+        "",
+        "CC: Low back pain after ruck march.",
+        "HPI: SGT Testcase reports lumbar pain 5/10 after 12-mile ruck",
+        "with 45 lb load on 2013-08-30. Pain radiates to right hip.",
+        "A: Lumbar strain, mechanical low back pain.",
+        "P: Quarters 24h, NSAIDs, core strengthening handout.",
+    ]
+    y = 120
+    for ln in lines:
+        d.text((110, y), ln, fill=0, font_size=44)
+        y += 70
+    buf = io.BytesIO()
+    img.save(buf, format="PNG", dpi=(200, 200))
+
+    import fitz
+    doc = fitz.open()
+    page = doc.new_page(width=612, height=792)
+    page.insert_image(fitz.Rect(0, 0, 612, 792), stream=buf.getvalue())
+    doc.save(str(path))
+    doc.close()
+
+
 if __name__ == "__main__":
     out = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
     out.mkdir(parents=True, exist_ok=True)
     make_str(out / "fixture_str_testcase.pdf")
     make_dd214(out / "fixture_dd214_testcase.pdf")
+    make_rating_decision(out / "fixture_rating_decision_testcase.pdf")
+    make_scanned_str(out / "fixture_scanned_str_testcase.pdf")
     print(f"wrote fixtures to {out}")

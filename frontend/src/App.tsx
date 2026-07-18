@@ -4,11 +4,13 @@ import Dashboard from './pages/Dashboard'
 import DocumentsPage from './pages/Documents'
 import ProfilePage from './pages/Profile'
 import ConditionsPage from './pages/Conditions'
+import CaseFilePage from './pages/CaseFile'
 import FormsPage from './pages/Forms'
 
 const TABS = [
   ['dashboard', 'Dashboard'],
   ['documents', 'Documents'],
+  ['casefile', 'Case File'],
   ['profile', 'Profile'],
   ['conditions', 'Conditions'],
   ['forms', 'Claim Forms'],
@@ -60,6 +62,7 @@ export default function App() {
           {caseId === null ? <p>Loading case…</p> : {
             dashboard: <Dashboard caseId={caseId} go={setTab} />,
             documents: <DocumentsPage caseId={caseId} />,
+            casefile: <CaseFilePage caseId={caseId} />,
             profile: <ProfilePage caseId={caseId} />,
             conditions: <ConditionsPage caseId={caseId} />,
             forms: <FormsPage caseId={caseId} />,
