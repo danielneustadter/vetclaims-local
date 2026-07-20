@@ -1,15 +1,44 @@
 import { useEffect, useState } from 'react'
-import { get } from '../api'
+import { get, getToken, post, setToken } from '../api'
 import type { Tab } from '../App'
 
 export default function Dashboard({ caseId, go }: { caseId: number; go: (t: Tab) => void }) {
   const [summary, setSummary] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
+  const [authOn, setAuthOn] = useState<boolean | null>(null)
+  const [pass, setPass] = useState('')
+  const [note, setNote] = useState('')
 
   useEffect(() => {
     get('/api/cases').then((cs) => setSummary(cs.find((c: any) => c.id === caseId)))
     get('/api/jobs').then(setJobs)
+    get('/api/auth/status').then((s) => setAuthOn(s.enabled))
   }, [caseId])
+
+  async function enableAuth() {
+    setNote('')
+    try {
+      const { token } = await post('/api/auth/setup', { passphrase: pass })
+      setToken(token)
+      setAuthOn(true)
+      setPass('')
+      setNote('Passphrase set — the app now locks on every new browser session.')
+    } catch (e: any) { setNote(e.message) }
+  }
+
+  async function backup() {
+    const r = await fetch('/api/backup', {
+      method: 'POST',
+      headers: getToken() ? { 'X-Auth-Token': getToken() } : undefined,
+    })
+    const blob = await r.blob()
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = /filename="?([^";]+)"?/.exec(
+      r.headers.get('Content-Disposition') ?? '')?.[1] ?? 'backup.zip'
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
 
   const steps = [
     ['1. Upload records', 'DD-214, service treatment records, VA decisions, private medical records.', 'documents'],
@@ -37,6 +66,29 @@ export default function Dashboard({ caseId, go }: { caseId: number; go: (t: Tab)
           </p>
         ))}
       </div>
+      <div className="card">
+        <h3>Security & backup</h3>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          {authOn === false && (
+            <>
+              <label className="f" style={{ minWidth: 220 }}>Set a passphrase (locks the app)
+                <input type="password" value={pass} onChange={(e) => setPass(e.target.value)}
+                  placeholder="8+ characters" />
+              </label>
+              <button className="btn ghost" disabled={pass.length < 8}
+                onClick={enableAuth}>Enable lock</button>
+            </>
+          )}
+          {authOn && <span className="pill ready">passphrase lock enabled</span>}
+          <button className="btn ghost" onClick={backup}>⬇ Download full backup (ZIP)</button>
+        </div>
+        <p style={{ color: 'var(--muted)', fontSize: 12.5, marginBottom: 0 }}>
+          Your records live only in this machine's <code>data/</code> folder. For at-rest
+          encryption use OS disk encryption (BitLocker / FileVault / LUKS). Store backups
+          somewhere encrypted too.</p>
+        {note && <div className="ok">{note}</div>}
+      </div>
+
       {jobs.length > 0 && (
         <div className="card">
           <h3>Recent activity</h3>

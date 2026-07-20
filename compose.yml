@@ -1,0 +1,23 @@
+# VetClaims Local via Docker Compose.
+# Ollama runs on the HOST (GPU access is simplest there):
+#   ollama pull mistral-small:22b && ollama pull qwen3:4b && ollama pull nomic-embed-text
+# then:  docker compose up --build   →  http://localhost:5173
+services:
+  backend:
+    build: ./backend
+    environment:
+      VETCLAIMS_OLLAMA_URL: http://host.docker.internal:11434
+      VETCLAIMS_DATA_DIR: /data
+    volumes:
+      - ./data:/data
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "8600:8600"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

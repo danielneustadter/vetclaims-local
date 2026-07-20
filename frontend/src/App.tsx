@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { get, post } from './api'
 import Dashboard from './pages/Dashboard'
+import Login from './pages/Login'
 import DocumentsPage from './pages/Documents'
 import DraftsPage from './pages/Drafts'
 import ProfilePage from './pages/Profile'
@@ -33,15 +34,23 @@ export default function App() {
   const [tab, setTab] = useState<Tab>(initialTab)
   const [caseId, setCaseId] = useState<number | null>(null)
   const [llm, setLlm] = useState<{ ollama: string; missing_models: string[] } | null>(null)
+  const [locked, setLocked] = useState(false)
+  const [boot, setBoot] = useState(0)
+
+  useEffect(() => {
+    const onAuth = () => setLocked(true)
+    window.addEventListener('vc-auth-required', onAuth)
+    return () => window.removeEventListener('vc-auth-required', onAuth)
+  }, [])
 
   useEffect(() => {
     ;(async () => {
       const cases = await get('/api/cases')
       if (cases.length) setCaseId(cases[0].id)
       else setCaseId((await post('/api/cases', { title: 'My VA Claim' })).id)
-    })().catch(console.error)
+    })().catch(() => {})
     get('/api/health').then((h) => setLlm(h.llm)).catch(() => setLlm(null))
-  }, [])
+  }, [boot])
 
   return (
     <>
@@ -65,7 +74,8 @@ export default function App() {
           </div>
         </aside>
         <main className="main">
-          {caseId === null ? <p>Loading case…</p> : {
+          {locked ? <Login onDone={() => { setLocked(false); setBoot(boot + 1) }} />
+          : caseId === null ? <p>Loading case…</p> : {
             dashboard: <Dashboard caseId={caseId} go={setTab} />,
             documents: <DocumentsPage caseId={caseId} />,
             casefile: <CaseFilePage caseId={caseId} />,

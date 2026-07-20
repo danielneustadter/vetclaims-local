@@ -23,7 +23,12 @@ async def lifespan(_app: FastAPI):
     stop_worker()
 
 
-app = FastAPI(title="VetClaims Local", lifespan=lifespan)
+from fastapi import Depends  # noqa: E402
+
+from .auth import gate  # noqa: E402
+
+app = FastAPI(title="VetClaims Local", lifespan=lifespan,
+              dependencies=[Depends(gate)])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -32,8 +37,9 @@ app.add_middleware(
 )
 
 from .routers import (analysis, appeals, cases, casefile,  # noqa: E402
-                      conditions, documents, drafts, jobs, packet)
+                      conditions, documents, drafts, jobs, packet, system)
 
+app.include_router(system.router)
 app.include_router(analysis.router)
 app.include_router(appeals.router)
 app.include_router(drafts.router)

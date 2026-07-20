@@ -76,7 +76,11 @@ intentionally left blank (form says complete only if applicable).
   decoded; issue table + decision dates render-verified. Rebuttal statement
   drafting (grounded, checked). 10182 delegated to va.gov/board-appeals.
 
-## Epic 7 — Hardening & distribution
-- ⬜ S7.1 Auth + encryption at rest + backup/export
-- ⬜ S7.2 First-run wizard
-- ⬜ S7.3 Docker Compose + docs + screenshot gallery
+## Epic 7 — Hardening & distribution ✅
+- ✅ S7.1 Optional passphrase lock (PBKDF2 + token gate, verified 401/200
+  paths); one-click full-backup ZIP; at-rest encryption delegated to OS disk
+  encryption (documented) rather than a half-measure
+- ✅ S7.2 First-run setup scripts (setup.ps1 / setup.sh): Ollama check, model
+  pulls, venv, refdata build, npm install; Dashboard security card
+- ✅ S7.3 Docker Compose (host Ollama for GPU) + Dockerfiles + nginx proxy;
+  README rewritten as full showcase with screenshot gallery

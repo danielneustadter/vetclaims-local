@@ -1,29 +1,42 @@
+export const getToken = () => localStorage.getItem('vc_token') ?? ''
+export const setToken = (t: string) => localStorage.setItem('vc_token', t)
+
+const hdrs = (json?: boolean): Record<string, string> => ({
+  ...(json ? { 'Content-Type': 'application/json' } : {}),
+  ...(getToken() ? { 'X-Auth-Token': getToken() } : {}),
+})
+
 const json = (r: Response) => {
+  if (r.status === 401) {
+    window.dispatchEvent(new Event('vc-auth-required'))
+    return Promise.reject(new Error('authentication required'))
+  }
   if (!r.ok) return r.json().then(
-    (b) => Promise.reject(new Error(b.detail ?? r.statusText)),
+    (b) => Promise.reject(new Error(typeof b.detail === 'string' ? b.detail : r.statusText)),
     () => Promise.reject(new Error(r.statusText)))
   return r.json()
 }
 
-export const get = (url: string) => fetch(url).then(json)
+export const get = (url: string) => fetch(url, { headers: hdrs() }).then(json)
 export const post = (url: string, body?: unknown) =>
   fetch(url, {
     method: 'POST',
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: hdrs(!!body),
     body: body ? JSON.stringify(body) : undefined,
   }).then(json)
 export const put = (url: string, body: unknown) =>
   fetch(url, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: hdrs(true),
     body: JSON.stringify(body),
   }).then(json)
-export const del = (url: string) => fetch(url, { method: 'DELETE' }).then(json)
+export const del = (url: string) =>
+  fetch(url, { method: 'DELETE', headers: hdrs() }).then(json)
 
 export async function downloadPdf(url: string, body?: unknown) {
   const r = await fetch(url, {
     method: 'POST',
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: hdrs(!!body),
     body: body ? JSON.stringify(body) : undefined,
   })
   if (!r.ok) {

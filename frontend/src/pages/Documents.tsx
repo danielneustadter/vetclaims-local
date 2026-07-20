@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { del, get, pollJob, post } from '../api'
+import { del, get, getToken, pollJob, post } from '../api'
 
 export default function DocumentsPage({ caseId }: { caseId: number }) {
   const [docs, setDocs] = useState<any[]>([])
@@ -21,7 +21,10 @@ export default function DocumentsPage({ caseId }: { caseId: number }) {
       const fd = new FormData()
       fd.append('file', file)
       try {
-        const r = await fetch(`/api/cases/${caseId}/documents`, { method: 'POST', body: fd })
+        const r = await fetch(`/api/cases/${caseId}/documents`, {
+          method: 'POST', body: fd,
+          headers: getToken() ? { 'X-Auth-Token': getToken() } : undefined,
+        })
         if (!r.ok) throw new Error((await r.json()).detail ?? r.statusText)
         const { job_id } = await r.json()
         await refresh()
