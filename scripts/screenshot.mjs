@@ -20,6 +20,7 @@ const shots = [
   ['conditions', 'conditions.png'],
   ['drafts', 'drafts.png'],
   ['forms', 'forms.png'],
+  ['appeals', 'appeals.png'],
 ]
 
 for (const [tab, file] of shots) {

@@ -95,6 +95,51 @@ def draft_statement(job: models.Job) -> dict:
         db.close()
 
 
+_REBUTTAL_SYSTEM = """You draft a first-person statement (for VA Form 21-4138
+or a Supplemental Claim) responding to a VA denial. STRICT RULES:
+- Use ONLY the provided facts and the denial reason. Never invent evidence.
+- Address the denial reason head-on: point at the documented facts that answer
+  it, by date and source, and state plainly what new evidence the veteran is
+  submitting or seeking if the record lacks it.
+- Respectful, factual tone. 200-350 words, flowing paragraphs.
+- End with: the statement is true to the best of the veteran's knowledge."""
+
+
+@job_handler("draft_rebuttal")
+def draft_rebuttal(job: models.Job) -> dict:
+    issue_id = job.payload["issue_id"]
+    db = session()
+    try:
+        issue = db.get(models.DecisionIssue, issue_id)
+        if issue is None:
+            raise ValueError("decision issue not found")
+        case_id = issue.case_id
+        condition = models.Condition(name=issue.condition, basis="direct",
+                                     notes="", case_id=case_id)
+        facts, cites = _condition_facts(db, case_id, condition)
+
+        set_progress(job.id, f"drafting rebuttal for {issue.condition}")
+        content = client.draft(
+            _REBUTTAL_SYSTEM,
+            f"Denied condition: {issue.condition}\n"
+            f"VA's stated reason: {issue.reason or 'not stated'}\n"
+            f"Decision date: {issue.decision_date or 'unknown'}\n\n"
+            f"Documented facts:\n{facts}\n\nDraft the rebuttal statement.")
+        set_progress(job.id, "checking draft against your records")
+        grounding = ground_check(content, facts + f"\nDenial reason: {issue.reason}")
+
+        draft = models.Draft(
+            case_id=case_id, condition_id=None, kind="personal_statement",
+            title=f"Rebuttal statement — {issue.condition}",
+            content=content.strip(), grounding={"citations": cites, **grounding})
+        db.add(draft)
+        db.commit()
+        return {"draft_id": draft.id,
+                "unsupported_claims": len(grounding.get("unsupported", []))}
+    finally:
+        db.close()
+
+
 # ---------- deterministic drafts ----------
 
 def nexus_outline(db, condition: models.Condition, case_id: int) -> str:

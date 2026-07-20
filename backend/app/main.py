@@ -9,7 +9,7 @@ from .llm.queue import start_worker, stop_worker
 
 # handler registration side effects
 from .ingest import textract  # noqa: F401
-from .extract import prefill, case_extract  # noqa: F401
+from .extract import prefill, case_extract, decisions  # noqa: F401
 from .drafting import generate as _draft_gen  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
@@ -31,10 +31,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from .routers import (analysis, cases, casefile, conditions,  # noqa: E402
-                      documents, drafts, jobs, packet)
+from .routers import (analysis, appeals, cases, casefile,  # noqa: E402
+                      conditions, documents, drafts, jobs, packet)
 
 app.include_router(analysis.router)
+app.include_router(appeals.router)
 app.include_router(drafts.router)
 app.include_router(cases.router)
 app.include_router(casefile.router)

@@ -119,6 +119,21 @@ class Chunk(Base):
     text: Mapped[str] = mapped_column(Text)
 
 
+class DecisionIssue(Base):
+    """One issue (condition) adjudicated in a parsed VA decision letter."""
+
+    __tablename__ = "decision_issue"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    case_id: Mapped[int] = mapped_column(ForeignKey("case.id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("document.id"))
+    decision_date: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    condition: Mapped[str] = mapped_column(String(300))
+    outcome: Mapped[str] = mapped_column(String(20))  # granted|denied|deferred
+    percent: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    effective_date: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    reason: Mapped[str] = mapped_column(Text, default="")
+
+
 class Draft(Base):
     """A generated document draft (personal statement, nexus outline, C&P
     prep, lay template). content is markdown-ish text the veteran edits in

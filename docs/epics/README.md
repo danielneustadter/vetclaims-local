@@ -67,10 +67,14 @@ attach its tiers like the mental formula (affects low-back what-if).
 Open items: 526EZ conditions >15 (Section XIII addendum), homeless section
 intentionally left blank (form says complete only if applicable).
 
-## Epic 6 — Decisions & appeals
-- ⬜ S6.1 Decision letter parser
-- ⬜ S6.2 AMA lane recommender + deadlines
-- ⬜ S6.3 Appeal form fill (20-0995 / 20-0996 / 10182) + rebuttal drafts
+## Epic 6 — Decisions & appeals ✅
+- ✅ S6.1 Decision letter parser — per-issue outcome/percent/effective date +
+  verbatim denial reason (verified on fixture: 3/3 issues exact)
+- ✅ S6.2 Deterministic AMA lane recommender (evidence-gap → 20-0995, VA error
+  → 20-0996) with 1-year deadline math
+- ✅ S6.3 20-0995/20-0996 fill with suffix-resolved field maps + benefit radio
+  decoded; issue table + decision dates render-verified. Rebuttal statement
+  drafting (grounded, checked). 10182 delegated to va.gov/board-appeals.
 
 ## Epic 7 — Hardening & distribution
 - ⬜ S7.1 Auth + encryption at rest + backup/export

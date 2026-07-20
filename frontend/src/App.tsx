@@ -5,6 +5,7 @@ import DocumentsPage from './pages/Documents'
 import DraftsPage from './pages/Drafts'
 import ProfilePage from './pages/Profile'
 import AnalysisPage from './pages/Analysis'
+import AppealsPage from './pages/Appeals'
 import ConditionsPage from './pages/Conditions'
 import CaseFilePage from './pages/CaseFile'
 import FormsPage from './pages/Forms'
@@ -18,6 +19,7 @@ const TABS = [
   ['conditions', 'Conditions'],
   ['drafts', 'Drafts'],
   ['forms', 'Claim Forms'],
+  ['appeals', 'Appeals'],
 ] as const
 
 export type Tab = (typeof TABS)[number][0]
@@ -72,6 +74,7 @@ export default function App() {
             conditions: <ConditionsPage caseId={caseId} />,
             drafts: <DraftsPage caseId={caseId} />,
             forms: <FormsPage caseId={caseId} />,
+            appeals: <AppealsPage caseId={caseId} />,
           }[tab]}
         </main>
       </div>

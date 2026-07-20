@@ -158,6 +158,37 @@ def make_scanned_str(path: Path):
     doc.close()
 
 
+DECISION_LINES = [
+    "DEPARTMENT OF VETERANS AFFAIRS (FICTIONAL TEST LETTER)",
+    "Decision date: 2026-05-12",
+    "",
+    "Dear Ms. Testcase,",
+    "",
+    "We made a decision on your claim received 2026-01-15.",
+    "",
+    "DECISION",
+    "1. Service connection for tinnitus is GRANTED with an evaluation of",
+    "   10 percent effective 2026-01-15.",
+    "2. Service connection for chronic rhinitis is DENIED. The evidence",
+    "   shows in-service respiratory complaints, but there is no current",
+    "   diagnosis of chronic rhinitis from a medical provider.",
+    "3. Service connection for PTSD is DENIED because the evidence does not",
+    "   show a confirmed diagnosis of PTSD under DSM-5 criteria.",
+]
+
+
+def make_decision_letter(path: Path):
+    c = canvas.Canvas(str(path), pagesize=letter)
+    _page_header(c, "VA DECISION LETTER (FICTIONAL TEST FIXTURE)")
+    c.setFont("Courier", 10)
+    y = H - 110
+    for ln in DECISION_LINES:
+        c.drawString(54, y, ln)
+        y -= 16
+    c.showPage()
+    c.save()
+
+
 if __name__ == "__main__":
     out = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
     out.mkdir(parents=True, exist_ok=True)
@@ -165,4 +196,5 @@ if __name__ == "__main__":
     make_dd214(out / "fixture_dd214_testcase.pdf")
     make_rating_decision(out / "fixture_rating_decision_testcase.pdf")
     make_scanned_str(out / "fixture_scanned_str_testcase.pdf")
+    make_decision_letter(out / "fixture_decision_letter_testcase.pdf")
     print(f"wrote fixtures to {out}")
