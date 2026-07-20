@@ -3,6 +3,7 @@ import { get, post } from './api'
 import Dashboard from './pages/Dashboard'
 import DocumentsPage from './pages/Documents'
 import ProfilePage from './pages/Profile'
+import AnalysisPage from './pages/Analysis'
 import ConditionsPage from './pages/Conditions'
 import CaseFilePage from './pages/CaseFile'
 import FormsPage from './pages/Forms'
@@ -11,6 +12,7 @@ const TABS = [
   ['dashboard', 'Dashboard'],
   ['documents', 'Documents'],
   ['casefile', 'Case File'],
+  ['analysis', 'Analysis'],
   ['profile', 'Profile'],
   ['conditions', 'Conditions'],
   ['forms', 'Claim Forms'],
@@ -63,6 +65,7 @@ export default function App() {
             dashboard: <Dashboard caseId={caseId} go={setTab} />,
             documents: <DocumentsPage caseId={caseId} />,
             casefile: <CaseFilePage caseId={caseId} />,
+            analysis: <AnalysisPage caseId={caseId} />,
             profile: <ProfilePage caseId={caseId} />,
             conditions: <ConditionsPage caseId={caseId} />,
             forms: <FormsPage caseId={caseId} />,

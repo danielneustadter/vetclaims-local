@@ -29,12 +29,19 @@ Epic 5).
 - ✅ S2.6 Fixture case incl. scanned page + rating decision; extraction-recall test
   (gated by VETCLAIMS_LLM_TESTS=1; 8/8 passing incl. live-LLM recall)
 
-## Epic 3 — Analysis
-- ⬜ S3.1 Refdata: eCFR 38 CFR Part 4 → rating_schedule.json
-- ⬜ S3.2 Combined-rating math (§4.25/§4.26) + unit tests
-- ⬜ S3.3 Secondary graph + presumptives datasets
-- ⬜ S3.4 Condition finder + suggestions API/UI with citations
-- ⬜ S3.5 What-if rating projections + evidence-gap checklist
+## Epic 3 — Analysis ✅
+- ✅ S3.1 Refdata: eCFR API → rating_schedule.json (724 DCs, 421 with tiers,
+  §4.130 mental-disorder formula attached to 9xxx codes)
+- ✅ S3.2 Combined-rating math (§4.25 table + §4.26 bilateral factor) — pure
+  functions tested against the regulation's published examples
+- ✅ S3.3 Curated secondary graph (23 edges w/ nexus rationale), presumptives
+  (PACT/AO/Gulf War/Lejeune/radiation), DBQ map, DC override table
+- ✅ S3.4 Deterministic condition finder: direct (cited), secondary,
+  presumptive-eligibility — Analysis tab with add-to-claim
+- ✅ S3.5 What-if projections at min/max tier + evidence-gap checklist per candidate
+
+Follow-up: spine codes (5235-5243) share the spine General Rating Formula —
+attach its tiers like the mental formula (affects low-back what-if).
 
 ## Epic 4 — Drafting
 - ⬜ S4.1 Personal statement generator (grounded, cited)

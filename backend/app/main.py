@@ -30,8 +30,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from .routers import cases, casefile, conditions, documents, jobs, packet  # noqa: E402
+from .routers import (analysis, cases, casefile, conditions,  # noqa: E402
+                      documents, jobs, packet)
 
+app.include_router(analysis.router)
 app.include_router(cases.router)
 app.include_router(casefile.router)
 app.include_router(documents.router)

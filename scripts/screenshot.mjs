@@ -15,6 +15,7 @@ const shots = [
   ['dashboard', 'dashboard.png'],
   ['documents', 'documents.png'],
   ['casefile', 'casefile.png'],
+  ['analysis', 'analysis.png'],
   ['profile', 'profile.png'],
   ['conditions', 'conditions.png'],
   ['forms', 'forms.png'],
