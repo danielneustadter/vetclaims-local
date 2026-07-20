@@ -119,6 +119,23 @@ class Chunk(Base):
     text: Mapped[str] = mapped_column(Text)
 
 
+class Draft(Base):
+    """A generated document draft (personal statement, nexus outline, C&P
+    prep, lay template). content is markdown-ish text the veteran edits in
+    the UI; grounding holds the checker's report for statement drafts."""
+
+    __tablename__ = "draft"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    case_id: Mapped[int] = mapped_column(ForeignKey("case.id"))
+    condition_id: Mapped[int | None] = mapped_column(ForeignKey("condition.id"), nullable=True)
+    kind: Mapped[str] = mapped_column(String(30))  # personal_statement|nexus_outline|cp_prep|lay_template
+    title: Mapped[str] = mapped_column(String(300))
+    content: Mapped[str] = mapped_column(Text, default="")
+    grounding: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=_now)
+    updated_at: Mapped[dt.datetime] = mapped_column(DateTime, default=_now, onupdate=_now)
+
+
 class Job(Base):
     __tablename__ = "job"
     id: Mapped[int] = mapped_column(primary_key=True)

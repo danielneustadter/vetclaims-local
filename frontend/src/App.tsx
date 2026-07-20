@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { get, post } from './api'
 import Dashboard from './pages/Dashboard'
 import DocumentsPage from './pages/Documents'
+import DraftsPage from './pages/Drafts'
 import ProfilePage from './pages/Profile'
 import AnalysisPage from './pages/Analysis'
 import ConditionsPage from './pages/Conditions'
@@ -15,6 +16,7 @@ const TABS = [
   ['analysis', 'Analysis'],
   ['profile', 'Profile'],
   ['conditions', 'Conditions'],
+  ['drafts', 'Drafts'],
   ['forms', 'Claim Forms'],
 ] as const
 
@@ -68,6 +70,7 @@ export default function App() {
             analysis: <AnalysisPage caseId={caseId} />,
             profile: <ProfilePage caseId={caseId} />,
             conditions: <ConditionsPage caseId={caseId} />,
+            drafts: <DraftsPage caseId={caseId} />,
             forms: <FormsPage caseId={caseId} />,
           }[tab]}
         </main>

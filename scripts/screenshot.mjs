@@ -18,6 +18,7 @@ const shots = [
   ['analysis', 'analysis.png'],
   ['profile', 'profile.png'],
   ['conditions', 'conditions.png'],
+  ['drafts', 'drafts.png'],
   ['forms', 'forms.png'],
 ]
 

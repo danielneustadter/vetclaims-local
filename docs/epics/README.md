@@ -43,11 +43,16 @@ Epic 5).
 Follow-up: spine codes (5235-5243) share the spine General Rating Formula —
 attach its tiers like the mental formula (affects low-back what-if).
 
-## Epic 4 — Drafting
-- ⬜ S4.1 Personal statement generator (grounded, cited)
-- ⬜ S4.2 Lay statement + nexus outline + C&P prep generators
-- ⬜ S4.3 Grounding checker job
-- ⬜ S4.4 Draft editor UI
+## Epic 4 — Drafting ✅
+- ✅ S4.1 Personal statement generator — only free-text LLM output in the app;
+  built strictly from the condition's cited events + profile facts
+- ✅ S4.2 Nexus outline (physician handout w/ evidence block + graph rationale),
+  C&P prep sheet (DBQ + actual rating tiers), lay-statement template — all
+  deterministic, no LLM
+- ✅ S4.3 Grounding checker: structured verification pass flags unsupported
+  factual sentences (verified: caught an invented symptom sentence on fixture)
+- ✅ S4.4 Drafts tab with editor, grounding flags, save; Forms tab loads
+  reviewed statements into the 21-4138
 
 ## Epic 5 — Packet publisher
 - ⬜ S5.1 Multi-condition 526EZ fill from case DB
