@@ -28,6 +28,17 @@ export default function FormsPage({ caseId }: { caseId: number }) {
       <p className="sub">Generated from your profile and selected conditions. Each PDF is a
         draft: open it, verify every field, sign it, and file it yourself on VA.gov.</p>
 
+      <div className="card" style={{ borderColor: 'var(--gold)', borderWidth: 2 }}>
+        <h3>📦 Complete filing packet</h3>
+        <p style={{ color: 'var(--muted)', fontSize: 13.5 }}>
+          One ZIP with everything in filing order: checklist, Intent to File, the 21-526EZ,
+          every reviewed personal statement as a 21-4138, and the indexed evidence packet
+          with exhibit-stamped pages from your own records.</p>
+        <button className="btn gold" disabled={nConditions === 0}
+          onClick={() => dl(`/api/cases/${caseId}/packet`)}>
+          Build complete packet</button>
+      </div>
+
       <div className="card">
         <h3>VA Form 21-0966 — Intent to File</h3>
         <p style={{ color: 'var(--muted)', fontSize: 13.5 }}>

@@ -52,6 +52,7 @@ class DirectDeposit(BaseModel):
 
 class ClaimantProfileData(BaseModel):
     claim_process: str = "FDC"  # FDC|Standard
+    itf_date: str = ""  # date an Intent to File was submitted (YYYY-MM-DD)
     identity: VeteranIdentity = Field(default_factory=VeteranIdentity)
     contact: ContactInfo = Field(default_factory=ContactInfo)
     service: ServiceInfo = Field(default_factory=ServiceInfo)

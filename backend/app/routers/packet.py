@@ -74,6 +74,21 @@ def generate_0966(case_id: int, db: Session = Depends(get_db)):
     return _save_and_respond(case_id, "VA-21-0966-ITF-draft.pdf", pdf)
 
 
+@router.post("/cases/{case_id}/packet")
+def build_packet(case_id: int, db: Session = Depends(get_db)):
+    from ..packet.assemble import build_packet_zip
+    try:
+        blob = build_packet_zip(db, case_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    out_dir = settings.output_dir / str(case_id)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    fname = f"{dt.date.today().isoformat()}_VA-claim-packet.zip"
+    (out_dir / fname).write_bytes(blob)
+    return Response(content=blob, media_type="application/zip",
+                    headers={"Content-Disposition": f'attachment; filename="{fname}"'})
+
+
 @router.get("/forms/{form}/preview/{page_no}")
 def preview_blank(form: str, page_no: int):
     if form not in fill.TEMPLATES:

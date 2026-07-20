@@ -54,11 +54,18 @@ attach its tiers like the mental formula (affects low-back what-if).
 - ✅ S4.4 Drafts tab with editor, grounding flags, save; Forms tab loads
   reviewed statements into the 21-4138
 
-## Epic 5 — Packet publisher
-- ⬜ S5.1 Multi-condition 526EZ fill from case DB
-- ⬜ S5.2 Evidence PDF: bookmarked, per-condition indexed
-- ⬜ S5.3 Packet assembly + filing checklist + ITF tracker
-- ⬜ S5.4 Field-verification pass against official forms
+## Epic 5 — Packet publisher ✅
+- ✅ S5.1 Multi-condition 526EZ fill from case DB (15 rows; overflow sheet open)
+- ✅ S5.2 Evidence PDF: per-condition index citing source doc+page, exhibit
+  stamps on extracted pages, bookmarks per condition
+- ✅ S5.3 One-ZIP packet: checklist cover → 21-0966 → 21-526EZ → statement
+  4138s → evidence packet; ITF date tracked on profile
+- ✅ S5.4 Field-verification pass: radio groups decoded via widget-rect ↔
+  label correlation (branch/component/yes-no/retired status/0966 benefit
+  boxes) and confirmed by rendering — ARMY/ACTIVE/NO verified pixel-perfect
+
+Open items: 526EZ conditions >15 (Section XIII addendum), homeless section
+intentionally left blank (form says complete only if applicable).
 
 ## Epic 6 — Decisions & appeals
 - ⬜ S6.1 Decision letter parser

@@ -3,6 +3,7 @@ import { get, pollJob, post, put } from '../api'
 
 const empty = {
   claim_process: 'FDC',
+  itf_date: '',
   identity: { first_name: '', middle_initial: '', last_name: '', ssn: '',
     va_file_number: '', date_of_birth: '', service_number: '' },
   contact: { phone: '', email: '', street: '', apt: '', city: '', state: '',
@@ -130,6 +131,10 @@ export default function ProfilePage({ caseId }: { caseId: number }) {
               <option value="FDC">Fully Developed Claim (faster)</option>
               <option value="Standard">Standard claim process</option>
             </select>
+          </label>
+          <label className="f">Intent to File submitted on (protects your effective date for 1 year)
+            <input type="date" value={p.itf_date ?? ''}
+              onChange={(e) => setP({ ...p, itf_date: e.target.value })} />
           </label>
           {f('Bank name (optional)', 'direct_deposit', 'bank_name')}
           {f('Routing number (optional)', 'direct_deposit', 'routing_number')}

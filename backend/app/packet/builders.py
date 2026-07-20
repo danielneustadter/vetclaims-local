@@ -46,6 +46,24 @@ _526_SSN = [
 
 MAX_CONDITIONS = 15  # rows on sheet 5 (#subform[10]); overflow sheet comes later
 
+# Radio-group state mappings decoded via widget-rect ↔ label correlation
+# (scripts kept in repo history; verified by rendering). All on #subform[11]
+# unless noted.
+BRANCH_19A = {  # RadioButtonList[10]
+    "army": "0", "air force": "1", "noaa": "2", "navy": "3",
+    "coast guard": "4", "usphs": "5", "public health": "5",
+    "marine": "6", "space force": "7",
+}
+COMPONENT_19B = {"active": "0", "reserve": "1", "national guard": "2"}  # RadioButtonList[12]
+
+_YESNO_S11 = {  # two-state groups on #subform[11]: /0 = YES, /1 = NO
+    "served_other_name": "RadioButtonList[0]",   # 18A
+    "combat_since_911": "RadioButtonList[1]",    # 20C
+    "reserve_ng_service": "RadioButtonList[2]",  # 21A
+    "pow": "RadioButtonList[6]",                 # 23A
+    "retired_pay": "RadioButtonList[7]",         # 24A
+}
+
 _EXPOSURE_CHECKBOXES = {
     "asbestos": S9 + "ASBESTOS[0]",
     "shad": S9 + "SHAD_Shipboard_Hazard_And_Defense[0]",
@@ -164,6 +182,9 @@ def build_526ez(profile: ClaimantProfileData, conditions: list) -> tuple[dict, d
         else:
             text[S10 + f"Date12[{i - 1}]"] = onset
 
+    # --- filed a VA claim before? (item 4) ---
+    checks[P10 + "RadioButtonList2[0]"] = "0" if p.identity.va_file_number else "1"
+
     # --- service info (sheet 6 / #subform[11]) ---
     if p.service.periods:
         first = p.service.periods[0]
@@ -174,6 +195,19 @@ def build_526ez(profile: ClaimantProfileData, conditions: list) -> tuple[dict, d
         m, d, y = _date_parts(first.separation_date)
         text[S11 + "ExitDate_Month[0]"], text[S11 + "ExitDate_Day[0]"], \
             text[S11 + "ExitDate_Year[0]"] = m, d, y
+        branch_state = next((v for k, v in BRANCH_19A.items()
+                             if k in first.branch.lower()), None)
+        if branch_state is not None:
+            checks[S11 + "RadioButtonList[10]"] = branch_state
+        comp_state = next((v for k, v in COMPONENT_19B.items()
+                           if k in first.service_component.lower()), None)
+        if comp_state is not None:
+            checks[S11 + "RadioButtonList[12]"] = comp_state
+    checks[S11 + _YESNO_S11["served_other_name"]] = \
+        "0" if p.service.served_under_other_name else "1"
+    checks[S11 + _YESNO_S11["pow"]] = "0" if p.service.pow else "1"
+    if p.service.combat_service:  # only assert YES; leave blank when unknown
+        checks[S11 + _YESNO_S11["combat_since_911"]] = "0"
     if p.service.served_under_other_name and p.service.other_name:
         text[S11 + "List_Other_Name_You_Served_Under[0]"] = p.service.other_name
 
@@ -262,4 +296,10 @@ def build_0966(profile: ClaimantProfileData) -> tuple[dict, dict]:
     text[I0 + "FirstThreeNumbers[1]"] = mid
     text[I0 + "LastFourNumbers[1]"] = last
     text[I0 + "EmailAddress1[0]"] = p.contact.email
-    return {k: v for k, v in text.items() if v}, {}
+    checks = {
+        # ITF is for disability compensation (page-2 benefit checkboxes)
+        "form1[0].#subform[1].Compensation[0]": "1",
+        # previously filed a claim? (/0 YES, /1 NO)
+        I0 + "RadioButtonList[0]": "0" if p.identity.va_file_number else "1",
+    }
+    return {k: v for k, v in text.items() if v}, checks
